@@ -31,8 +31,7 @@ defmodule RoomWeb.ConnCase do
     end
   end
 
-  setup tags do
-    Room.DataCase.setup_sandbox(tags)
+  setup do
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end
