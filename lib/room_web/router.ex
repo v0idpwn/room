@@ -17,7 +17,7 @@ defmodule RoomWeb.Router do
   scope "/", RoomWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", SpaceListLive
   end
 
   # Other scopes may use custom stacks.

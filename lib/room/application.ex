@@ -8,16 +8,10 @@ defmodule Room.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
       Room.Repo,
-      # Start the Telemetry supervisor
       RoomWeb.Telemetry,
-      # Start the PubSub system
       {Phoenix.PubSub, name: Room.PubSub},
-      # Start the Endpoint (http/https)
       RoomWeb.Endpoint
-      # Start a worker by calling: Room.Worker.start_link(arg)
-      # {Room.Worker, arg}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
