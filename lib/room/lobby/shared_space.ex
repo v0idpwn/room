@@ -14,7 +14,15 @@ defmodule Room.Lobby.SharedSpace do
   def changeset(struct, attrs) do
     struct
     |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> put_new_name()
+  end
+
+  # TODO: autogenerate
+  defp put_new_name(changeset) do
+    case get_field(changeset, :name) do
+      nil -> put_change(changeset, :name, FriendlyID.generate(4, separator: "-"))
+      _name -> changeset
+    end
   end
 
   def query_many(shared_space_ids) do

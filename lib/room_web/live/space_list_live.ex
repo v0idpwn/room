@@ -13,14 +13,27 @@ defmodule RoomWeb.SpaceListLive do
   def render(assigns) do
     ~H"""
     <div>
-    <h3 class="h3">Available rooms:</h3>
-    <%= for shared_space <- @shared_spaces do %>
       <div class="row">
         <div class="column">
-          <button phx-click="go-to-space" phx-value-space-id={shared_space.id} class="w-100 button-large button button-outline"><%= shared_space.name %></button>
+          <h3 class="h3">Available rooms:</h3>
+        </div>
+        <div class="column">
+          <div class="clearfix">
+            <button phx-click="create-space" class="button-large button float-right">+</button>
+          </div>
         </div>
       </div>
-    <% end %>
+      <%= if @shared_spaces == [] do %>
+        No spaces yet. Try creating one.
+      <% else %>
+        <%= for shared_space <- @shared_spaces do %>
+          <div class="row">
+            <div class="column">
+              <button phx-click="go-to-space" phx-value-space-id={shared_space.id} class="w-100 button-large button button-outline"><%= shared_space.name %></button>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
     </div>
     """
   end
@@ -29,6 +42,12 @@ defmodule RoomWeb.SpaceListLive do
   def handle_event("go-to-space", %{"space-id" => id}, socket) do
     IO.inspect(id, label: :clicked_id)
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("create-space", _params, socket) do
+    {:ok, created_space} = Lobby.create_shared_space()
+    {:noreply, assign(socket, shared_spaces: [created_space | socket.assigns.spaces])}
   end
 
   @impl true
