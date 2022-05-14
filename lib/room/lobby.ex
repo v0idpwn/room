@@ -6,6 +6,25 @@ defmodule Room.Lobby do
   alias Room.Repo
 
   alias Room.Lobby.SharedSpace
+  alias Room.Lobby.SpaceList
+
+  @doc """
+  Creates the default space list if it doens't exist
+  """
+  def setup!() do
+    SpaceList.default_space_list_query()
+    |> Repo.one()
+    |> case do
+      nil ->
+        SpaceList.default_space_list_changeset()
+        |> Repo.insert!()
+
+      _ ->
+        :ok
+    end
+
+    :ok
+  end
 
   @doc """
   Returns the list of shared_spaces.
@@ -17,7 +36,11 @@ defmodule Room.Lobby do
 
   """
   def list_shared_spaces do
-    Repo.all(SharedSpace)
+    SpaceList.default_space_list_query()
+    |> Repo.one!()
+    |> Map.fetch!(:spaces)
+    |> SharedSpace.query_many()
+    |> Repo.all()
   end
 
   @doc """
@@ -49,9 +72,20 @@ defmodule Room.Lobby do
 
   """
   def create_shared_space(attrs \\ %{}) do
-    %SharedSpace{}
-    |> SharedSpace.changeset(attrs)
-    |> Repo.insert()
+    # TODO: transaction
+    with changeset = SharedSpace.changeset(%SharedSpace{}, attrs),
+         {:ok, shared_space} <- Repo.insert(changeset),
+         {:ok, _space_list} <- insert_space_in_space_list(shared_space) do
+      {:ok, shared_space}
+    end
+  end
+
+  def insert_space_in_space_list(%SharedSpace{id: shared_space_id}) do
+    # TODO: this is not concurrency safe until we use crdt sets
+    SpaceList.default_space_list_query()
+    |> Repo.one!()
+    |> SpaceList.put_shared_space_change(shared_space_id)
+    |> Repo.update()
   end
 
   @doc """

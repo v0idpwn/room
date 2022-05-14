@@ -3,6 +3,12 @@ defmodule Room.LobbyTest do
 
   alias Room.Lobby
 
+  setup_all do
+    Lobby.setup!()
+
+    :ok
+  end
+
   describe "shared_spaces" do
     alias Room.Lobby.SharedSpace
 
@@ -11,8 +17,8 @@ defmodule Room.LobbyTest do
     @invalid_attrs %{name: nil}
 
     test "list_shared_spaces/0 returns all shared_spaces" do
-      shared_space = shared_space_fixture()
-      assert Lobby.list_shared_spaces() == [shared_space]
+      %{id: shared_space_id} = shared_space_fixture()
+      assert [%{id: ^shared_space_id} | _] = Lobby.list_shared_spaces()
     end
 
     test "get_shared_space!/1 returns the shared_space with given id" do
