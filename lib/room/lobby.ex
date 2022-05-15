@@ -60,6 +60,11 @@ defmodule Room.Lobby do
   def get_shared_space!(id), do: Repo.get!(SharedSpace, id)
 
   @doc """
+  Reloads a shared space
+  """
+  def reload_shared_space!(shared_space), do: Repo.reload!(shared_space)
+
+  @doc """
   Creates a shared_space.
 
   ## Examples
@@ -86,6 +91,10 @@ defmodule Room.Lobby do
     |> Repo.one!()
     |> SpaceList.put_shared_space_change(shared_space_id)
     |> Repo.update()
+  end
+
+  def update_shared_space(%Ecto.Changeset{data: %SharedSpace{}} = changeset) do
+    Repo.update(changeset)
   end
 
   @doc """

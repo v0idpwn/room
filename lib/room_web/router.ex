@@ -18,6 +18,7 @@ defmodule RoomWeb.Router do
     pipe_through :browser
 
     live "/", SpaceListLive
+    live "/room/:shared_space_id", SpaceLive
   end
 
   # Other scopes may use custom stacks.

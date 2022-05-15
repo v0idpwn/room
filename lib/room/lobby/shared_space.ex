@@ -5,8 +5,8 @@ defmodule Room.Lobby.SharedSpace do
 
   schema "shared_spaces" do
     field :name, :string
-    field :clickable_counter, Vax.Types.Counter
-    field :present_users, Vax.Types.Counter
+    field :clickable_counter, Vax.Types.Counter, default: 0
+    field :present_users, Vax.Types.Counter, default: 0
 
     timestamps()
   end

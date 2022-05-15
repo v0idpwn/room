@@ -3,7 +3,7 @@ defmodule Room.Lobby.SpaceList do
   import Ecto.Changeset
   import Ecto.Query
 
-  @default_space_list_id "default"
+  @default_space_list_id "default_space_listt"
 
   # TODO: first off, sets, and then, associations
   schema "space_lists" do

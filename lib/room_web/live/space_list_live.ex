@@ -1,11 +1,12 @@
 defmodule RoomWeb.SpaceListLive do
-  use Phoenix.LiveView
+  use RoomWeb, :live_view
 
   alias Room.Lobby
 
   @impl true
   def mount(_params, _session, socket) do
     request_tick()
+    Process.flag(:trap_exit, true)
     {:ok, assign(socket, shared_spaces: Lobby.list_shared_spaces())}
   end
 
@@ -40,8 +41,8 @@ defmodule RoomWeb.SpaceListLive do
 
   @impl true
   def handle_event("go-to-space", %{"space-id" => id}, socket) do
-    IO.inspect(id, label: :clicked_id)
-    {:noreply, socket}
+    route = Routes.live_path(socket, RoomWeb.SpaceLive, id)
+    {:noreply, push_redirect(socket, to: route)}
   end
 
   @impl true

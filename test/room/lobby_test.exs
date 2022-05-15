@@ -36,6 +36,13 @@ defmodule Room.LobbyTest do
       refute is_nil(name)
     end
 
+    test "update_shared_space/1 with valid changeset updates the shared_space" do
+      assert {:ok, %SharedSpace{clickable_counter: 1}} =
+               shared_space_fixture()
+               |> Vax.Types.Counter.cast_increment(:clickable_counter, 1)
+               |> Lobby.update_shared_space()
+    end
+
     test "update_shared_space/2 with valid data updates the shared_space" do
       shared_space = shared_space_fixture()
       update_attrs = %{name: "Updated name"}
