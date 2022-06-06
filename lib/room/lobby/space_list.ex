@@ -7,7 +7,7 @@ defmodule Room.Lobby.SpaceList do
 
   # TODO: first off, sets, and then, associations
   schema "space_lists" do
-    field :spaces, {:array, :string}
+    field :spaces, Vax.Types.Set, type: :string
 
     timestamps()
   end
@@ -20,7 +20,7 @@ defmodule Room.Lobby.SpaceList do
   end
 
   def put_shared_space_change(space_list, space_id) do
-    change(space_list, spaces: [space_id | space_list.spaces])
+    change(space_list, spaces: MapSet.put(space_list.spaces, space_id))
   end
 
   def default_space_list_changeset() do

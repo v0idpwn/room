@@ -39,6 +39,7 @@ defmodule Room.Lobby do
     SpaceList.default_space_list_query()
     |> Repo.one!()
     |> Map.fetch!(:spaces)
+    |> Enum.to_list()
     |> SharedSpace.query_many()
     |> Repo.all()
   end
@@ -86,7 +87,6 @@ defmodule Room.Lobby do
   end
 
   def insert_space_in_space_list(%SharedSpace{id: shared_space_id}) do
-    # TODO: this is not concurrency safe until we use crdt sets
     SpaceList.default_space_list_query()
     |> Repo.one!()
     |> SpaceList.put_shared_space_change(shared_space_id)

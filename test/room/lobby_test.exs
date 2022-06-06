@@ -16,7 +16,7 @@ defmodule Room.LobbyTest do
 
     test "list_shared_spaces/0 returns all shared_spaces" do
       %{id: shared_space_id} = shared_space_fixture()
-      assert [%{id: ^shared_space_id} | _] = Lobby.list_shared_spaces()
+      assert Lobby.list_shared_spaces() |> Enum.find(fn %{id: id} -> id == shared_space_id end)
     end
 
     test "get_shared_space!/1 returns the shared_space with given id" do
