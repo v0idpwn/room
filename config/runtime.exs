@@ -21,10 +21,10 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
-  address = System.fetch_env!("ANTIDOTE_ADDRESS")
+  hostname = System.fetch_env!("ANTIDOTE_HOST")
   port = System.fetch_env!("ANTIDOTE_PORT") |> String.to_integer()
 
-  config :room, Room.Repo, address: address, port: port
+  config :room, Room.Repo, hostname: hostname, port: port
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
