@@ -8,6 +8,8 @@ defmodule RoomWeb.SpaceLive do
   def mount(%{"shared_space_id" => id}, _session, socket) do
     request_tick()
 
+    socket = assign(socket, set_changeset: Ecto.Changeset.change({%{item: ""}, %{item: :string}}))
+
     if connected?(socket) do
       {:ok, shared_space} =
         id
@@ -28,18 +30,50 @@ defmodule RoomWeb.SpaceLive do
     ~H"""
     <div>
       <h3 class="h3"><%= @shared_space.name %></h3>
+      <hr/>
       <div class="row">
         <div class="column">
-          Counter: <%= @shared_space.clickable_counter %>
+          <h3 class="h3">Counter</h3>
+          <p>Current value: <%= @shared_space.clickable_counter %></p>
         </div>
         <div class="column">
           <button phx-click="increment" class="button">+</button>
           <button phx-click="decrement" class="button">-</button>
         </div>
       </div>
+      <hr/>
       <div class="row">
         <div class="column">
-          People on this space: <%= @shared_space.present_users %>
+          <h3 class="h3">Tags</h3>
+          <%= if MapSet.size(@shared_space.tags) == 0 do %>
+            <p>No tags, try adding some.</p>
+          <% else %>
+            <%= for tag <- @shared_space.tags do %>
+              <button class="button button-outline", disabled={true}><%= tag %></button>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="column">
+          Add new tag:
+          <.form let={f} for={@set_changeset} as={:set} phx-submit="add-item">
+            <div class="row">
+              <div class="column">
+                <%= text_input f, :item %>
+              </div>
+              <div class="column">
+                <%= submit "Add", class: "button" %>
+              </div>
+            </div>
+          </.form>
+        </div>
+      </div>
+      <hr/>
+      <div class="row">
+        <div class="column">
+          <h3 class="h3">Online people:</h3>
+          <p>People on this space: <%= @shared_space.present_users %></p>
         </div>
       </div>
     </div>
@@ -61,6 +95,16 @@ defmodule RoomWeb.SpaceLive do
     {:ok, shared_space} =
       socket.assigns.shared_space
       |> Counter.cast_decrement(:clickable_counter, 1)
+      |> Lobby.update_shared_space()
+
+    {:noreply, assign(socket, shared_space: shared_space)}
+  end
+
+  @impl true
+  def handle_event("add-item", %{"set" => %{"item" => item}}, socket) do
+    {:ok, shared_space} =
+      socket.assigns.shared_space
+      |> Vax.Types.Set.cast_put(:tags, item)
       |> Lobby.update_shared_space()
 
     {:noreply, assign(socket, shared_space: shared_space)}

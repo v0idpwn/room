@@ -7,13 +7,14 @@ defmodule Room.Lobby.SharedSpace do
     field :name, :string
     field :clickable_counter, Vax.Types.Counter, default: 0
     field :present_users, Vax.Types.Counter, default: 0
+    field :tags, Vax.Types.Set, type: :string
 
     timestamps()
   end
 
   def changeset(struct, attrs) do
     struct
-    |> cast(attrs, [:name])
+    |> cast(attrs, [:name, :tags])
     |> put_new_name()
   end
 
